@@ -152,7 +152,7 @@ class Bot(commands.Bot):
         mod_cog = self.get_cog('Mod')
         global_ignores = self.get_cog('Owner').global_ignores
 
-        if self.settings.owner == author.id:
+        if self.settings.owner == author.id or author.id in self.settings.co_owners:
             return True
 
         if author.id in global_ignores["blacklist"]:
