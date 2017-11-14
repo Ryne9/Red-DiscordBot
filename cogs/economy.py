@@ -61,7 +61,7 @@ class SMReel(Enum):
     cherries  = "\N{CHERRIES}"
     cookie    = "\N{COOKIE}"
     flc       = "\N{FOUR LEAF CLOVER}"
-    shibe     = "\:shibe:"
+    shibe     = "<:shibe:265632173040730112>"
     sunflower = "\N{SUNFLOWER}"
     heart     = "\N{HEAVY BLACK HEART}"
 
