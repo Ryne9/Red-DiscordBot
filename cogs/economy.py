@@ -60,54 +60,35 @@ NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
 class SMReel(Enum):
     cherries  = "\N{CHERRIES}"
     cookie    = "\N{COOKIE}"
-    two       = "\N{DIGIT TWO}" + NUM_ENC
     flc       = "\N{FOUR LEAF CLOVER}"
-    cyclone   = "\N{CYCLONE}"
+    shibe     = ":shibe:"
     sunflower = "\N{SUNFLOWER}"
-    six       = "\N{DIGIT SIX}" + NUM_ENC
-    mushroom  = "\N{MUSHROOM}"
     heart     = "\N{HEAVY BLACK HEART}"
-    snowflake = "\N{SNOWFLAKE}"
 
 PAYOUTS = {
-    (SMReel.two, SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 2500 + x,
-        "phrase" : "JACKPOT! 226! Your bid has been multiplied * 2500!"
+    (SMReel.shibe, SMReel.shibe, SMReel.shibe): {
+        "payout" : lambda x: x * 35,
+        "phrase" : "JACKPOT! ALL SHIBES! Your bid has been multiplied * 35!"
     },
-    (SMReel.flc, SMReel.flc, SMReel.flc) : {
-        "payout" : lambda x: x + 1000,
-        "phrase" : "4LC! +1000!"
+    (SMReel.shibe, SMReel.shibe): {
+        "payout" : lambda x: x * 5,
+        "phrase" : "Two shibes! Your bid has been multiplied by 5!"
     },
-    (SMReel.cherries, SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x + 800,
-        "phrase" : "Three cherries! +800!"
-    },
-    (SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 4 + x,
-        "phrase" : "2 6! Your bid has been multiplied * 4!"
-    },
-    (SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x * 3 + x,
-        "phrase" : "Two cherries! Your bid has been multiplied * 3!"
+    (SMReel.shibe): {
+        "payout": lambda x: x * 2,
+        "phrase": "One shibe! Your bid has been multiplied by 2!"
     },
     "3 symbols" : {
-        "payout" : lambda x: x + 500,
-        "phrase" : "Three symbols! +500!"
-    },
-    "2 symbols" : {
-        "payout" : lambda x: x * 2 + x,
-        "phrase" : "Two consecutive symbols! Your bid has been multiplied * 2!"
-    },
+        "payout" : lambda x: x * 12,
+        "phrase" : "Three symbols! Your bid has been multiplied by 12!"
+    }
 }
 
 SLOT_PAYOUTS_MSG = ("Slot machine payouts:\n"
-                    "{two.value} {two.value} {six.value} Bet * 2500\n"
-                    "{flc.value} {flc.value} {flc.value} +1000\n"
-                    "{cherries.value} {cherries.value} {cherries.value} +800\n"
-                    "{two.value} {six.value} Bet * 4\n"
-                    "{cherries.value} {cherries.value} Bet * 3\n\n"
-                    "Three symbols: +500\n"
-                    "Two symbols: Bet * 2".format(**SMReel.__dict__))
+                    "{shibe.value} {shibe.value} {shibe.value} Bet * 35\n"
+                    "{shibe.value} {shibe.value} Bet * 5\n"
+                    "{shibe.value} Bet * 2\n"
+                    "Three symbols: Bet * 12\n".format(**SMReel.__dict__))
 
 
 class Bank:
@@ -583,19 +564,27 @@ class Economy:
 
         payout = PAYOUTS.get(rows[1])
         if not payout:
-            # Checks for two-consecutive-symbols special rewards
+            # Checks for two-symbol special rewards
             payout = PAYOUTS.get((rows[1][0], rows[1][1]),
-                     PAYOUTS.get((rows[1][1], rows[1][2]))
-                                )
+                     PAYOUTS.get((rows[1][1], rows[1][2])),
+                                 )
+        if not payout:
+            # Checks for other two-symbol rewards
+            payout = PAYOUTS.get((rows[1][1], rows[1][2]))
+
+        # Check one symbol rewards
+        if not payout:
+            payout = PAYOUTS.get(rows[1][0])
+        if not payout:
+            payout = PAYOUTS.get(rows[1][1])
+        if not payout:
+            payout = PAYOUTS.get(rows[1][2])
+
         if not payout:
             # Still nothing. Let's check for 3 generic same symbols
-            # or 2 consecutive symbols
             has_three = rows[1][0] == rows[1][1] == rows[1][2]
-            has_two = (rows[1][0] == rows[1][1]) or (rows[1][1] == rows[1][2])
             if has_three:
                 payout = PAYOUTS["3 symbols"]
-            elif has_two:
-                payout = PAYOUTS["2 symbols"]
 
         if payout:
             then = self.bank.get_balance(author)
