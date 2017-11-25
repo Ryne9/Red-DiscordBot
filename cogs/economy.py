@@ -67,20 +67,20 @@ class SMReel(Enum):
 
 PAYOUTS = {
     (SMReel.shibe, SMReel.shibe, SMReel.shibe): {
-        "payout" : lambda x: x * 35,
-        "phrase" : "JACKPOT! ALL SHIBES! Your bid has been multiplied * 35!"
+        "payout" : lambda x: x * 70,
+        "phrase" : "JACKPOT! ALL SHIBES! Your bid has been multiplied * 70!"
     },
     (SMReel.shibe, SMReel.shibe): {
-        "payout" : lambda x: x * 5,
-        "phrase" : "Two shibes! Your bid has been multiplied by 5!"
+        "payout" : lambda x: x * 10,
+        "phrase" : "Two shibes! Your bid has been multiplied by 10!"
     },
     (SMReel.shibe): {
-        "payout": lambda x: x * 2,
-        "phrase": "One shibe! Your bid has been multiplied by 2!"
+        "payout": lambda x: x * 4,
+        "phrase": "One shibe! Your bid has been multiplied by 4!"
     },
     "3 symbols" : {
-        "payout" : lambda x: x * 12,
-        "phrase" : "Three symbols! Your bid has been multiplied by 12!"
+        "payout" : lambda x: x * 24,
+        "phrase" : "Three symbols! Your bid has been multiplied by 24!"
     }
 }
 
@@ -570,7 +570,7 @@ class Economy:
                                  )
         if not payout:
             # Checks for other two-symbol rewards
-            payout = PAYOUTS.get((rows[1][1], rows[1][2]))
+            payout = PAYOUTS.get((rows[1][0], rows[1][2]))
 
         # Check one symbol rewards
         if not payout:
