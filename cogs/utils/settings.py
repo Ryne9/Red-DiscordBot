@@ -22,7 +22,7 @@ class Settings:
             "default": {"ADMIN_ROLE": "Transistor",
                         "MOD_ROLE": "Process",
                         "PREFIXES": []},
-            "co_owners": ["103627617260797952", "90525689790365696", "90526038064402432"]
+            "co_owners": []
                         }
         self._memory_only = False
 
